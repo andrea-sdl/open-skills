@@ -1,0 +1,12 @@
+{
+  "identity": {"host": "github.com", "owner": "acme", "repo": "catalog", "number": 88},
+  "title": "Publish cache entries only after complete catalog loads",
+  "description": "A timed-out catalog refresh wrote its partial result into the shared cache. Later requests treated that partial list as complete until the TTL expired. Build each refresh in request-local memory, validate the provider result, then replace the shared entry in one write. A failed refresh must keep the last complete entry. A first load with no complete entry still returns the current unavailable response. The cache key and TTL do not change, so existing consumers keep their lookup contract.",
+  "commits": [
+    {"sha": "bbb222", "title": "Make catalog cache publication atomic", "body": "Preserve the last complete catalog on provider errors."}
+  ],
+  "issues": [],
+  "revision": "2222222222222222222222222222222222222222",
+  "url": "https://github.com/acme/catalog/pull/88",
+  "diff": "diff --git a/src/catalog_loader.py b/src/catalog_loader.py\nindex 1111111..2222222 100644\n--- a/src/catalog_loader.py\n+++ b/src/catalog_loader.py\n@@ -12,11 +12,14 @@ def refresh_catalog(provider, cache):\n-    entry = cache.start(CATALOG_KEY, ttl=CATALOG_TTL)\n+    pending = []\n     for page in provider.pages():\n-        entry.extend(page.items)\n-    entry.complete = True\n-    return entry.items\n+        pending.extend(page.items)\n+    validate_catalog(pending)\n+    cache.replace(CATALOG_KEY, pending, ttl=CATALOG_TTL)\n+    return pending\n \ndiff --git a/src/catalog_service.py b/src/catalog_service.py\nindex 3333333..4444444 100644\n--- a/src/catalog_service.py\n+++ b/src/catalog_service.py\n@@ -22,6 +22,9 @@ def catalog(provider, cache):\n     try:\n         return refresh_catalog(provider, cache)\n     except ProviderError:\n-        raise Unavailable()\n+        previous = cache.get(CATALOG_KEY)\n+        if previous is None:\n+            raise Unavailable()\n+        return previous\n \ndiff --git a/tests/test_catalog.py b/tests/test_catalog.py\nindex 5555555..6666666 100644\n--- a/tests/test_catalog.py\n+++ b/tests/test_catalog.py\n@@ -1 +1,2 @@\n assert catalog(complete_provider, cache) == all_items\n+assert catalog(timeout_provider, warm_cache) == previous_items\n"
+}

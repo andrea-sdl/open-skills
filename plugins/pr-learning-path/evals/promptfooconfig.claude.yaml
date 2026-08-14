@@ -1,0 +1,67 @@
+description: PR Learning Path with Claude
+
+prompts:
+  - id: file://prompt.cjs
+    label: Standalone learning authoring contract
+
+providers:
+  - &provider
+    id: anthropic:claude-agent-sdk
+    label: Claude default model
+    config:
+      working_dir: "{{ env.PR_LEARNING_EVAL_WORKSPACE }}"
+      apiKeyRequired: false
+      tools: []
+      setting_sources: []
+      permission_mode: dontAsk
+      persist_session: false
+      max_turns: 1
+      effort: high
+
+defaultTest:
+  options:
+    provider: *provider
+  assert:
+    - type: python
+      value: file://assertions.py:validate_candidate
+      metric: deterministic-contract
+    - type: llm-rubric
+      value: |
+        This is a model self-consistency check, not an independent verdict.
+        Use the raw change and evaluation oracle below.
+
+        Raw change:
+        {{ fixture | dump }}
+
+        Evaluation oracle:
+        {{ expectations }}
+
+        Pass only when the candidate tests each listed concept through why,
+        flow, boundary, tradeoff, prediction, or impact. Require plausible
+        wrong answers and specific per-option feedback. Reject source recall,
+        test or docs trivia, obvious answers, unsupported claims, and source
+        excerpts. Do not require exact wording.
+      metric: model-consistency
+
+tests:
+  - description: Authorization boundary and impact
+    vars:
+      fixture: file://fixtures/auth-boundary.json
+      expectations: file://fixtures/auth-boundary.expectations.md
+      sectionCount: 3
+  - description: Cache flow, ownership, and synthesis
+    vars:
+      fixture: file://fixtures/cache-flow.json
+      expectations: file://fixtures/cache-flow.expectations.md
+      sectionCount: 4
+
+evaluateOptions:
+  repeat: 1
+  cache: false
+  maxConcurrency: 1
+  timeoutMs: 300000
+
+tags:
+  area: pr-learning-path
+  sdk: claude
+  judge: self-consistency

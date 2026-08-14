@@ -1,0 +1,20 @@
+{
+  "name": "open-skills",
+  "interface": {
+    "displayName": "Open Skills"
+  },
+  "plugins": [
+    {
+      "name": "pr-learning-path",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pr-learning-path"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
+    }
+  ]
+}

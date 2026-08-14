@@ -1,0 +1,12 @@
+{
+  "identity": {"host": "github.com", "owner": "acme", "repo": "editor", "number": 93},
+  "title": "Shorten the add-item labels",
+  "description": "Use the shorter label in both menus.",
+  "commits": [
+    {"sha": "ccc333", "title": "Shorten add-item labels", "body": ""}
+  ],
+  "issues": [],
+  "revision": "3333333333333333333333333333333333333333",
+  "url": "https://github.com/acme/editor/pull/93",
+  "diff": "diff --git a/src/menu.jsx b/src/menu.jsx\nindex 1111111..2222222 100644\n--- a/src/menu.jsx\n+++ b/src/menu.jsx\n@@ -3 +3 @@\n-<Button label={ __( 'Add item' ) } />\n+<Button label={ __( 'Add' ) } />\ndiff --git a/src/toolbar.jsx b/src/toolbar.jsx\nindex 3333333..4444444 100644\n--- a/src/toolbar.jsx\n+++ b/src/toolbar.jsx\n@@ -4 +4 @@\n-<Toolbar title={ __( 'Add item' ) } />\n+<Toolbar title={ __( 'Add' ) } />\n"
+}

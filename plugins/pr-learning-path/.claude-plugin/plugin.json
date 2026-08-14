@@ -1,0 +1,15 @@
+{
+  "name": "pr-learning-path",
+  "version": "0.1.0",
+  "description": "Turn a GitHub pull request or local code change into a focused, self-contained learning path.",
+  "author": {
+    "name": "Andrea Grassi",
+    "url": "https://github.com/andrea-sdl"
+  },
+  "homepage": "https://github.com/andrea-sdl/open-skills",
+  "repository": "https://github.com/andrea-sdl/open-skills",
+  "license": "GPL-2.0-only",
+  "skills": [
+    "./skills/pr-learning-path"
+  ]
+}

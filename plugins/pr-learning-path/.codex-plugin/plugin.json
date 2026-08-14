@@ -1,0 +1,38 @@
+{
+  "name": "pr-learning-path",
+  "version": "0.1.0",
+  "description": "Turn a GitHub pull request or local code change into a focused, self-contained learning path.",
+  "author": {
+    "name": "Andrea Grassi",
+    "url": "https://github.com/andrea-sdl"
+  },
+  "homepage": "https://github.com/andrea-sdl/open-skills",
+  "repository": "https://github.com/andrea-sdl/open-skills",
+  "license": "GPL-2.0-only",
+  "keywords": [
+    "learning",
+    "pull-request",
+    "code-change",
+    "quiz"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PR Learning Path",
+    "shortDescription": "Learn the why, flow, and impact of code changes.",
+    "longDescription": "Build a hard, evidence-linked learning path from a GitHub pull request or local change, then study it in one shareable HTML file.",
+    "developerName": "Andrea Grassi",
+    "category": "Engineering",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/andrea-sdl/open-skills",
+    "brandColor": "#0F8B8D",
+    "composerIcon": "./skills/pr-learning-path/assets/woven-loop.svg",
+    "logo": "./skills/pr-learning-path/assets/woven-loop.svg",
+    "defaultPrompt": [
+      "Build a learning path for this pull request.",
+      "Teach me the intent and impact of my local changes."
+    ]
+  }
+}

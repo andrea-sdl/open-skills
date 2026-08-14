@@ -1,0 +1,27 @@
+{
+  "name": "open-skills",
+  "owner": {
+    "name": "Andrea Grassi",
+    "url": "https://github.com/andrea-sdl"
+  },
+  "metadata": {
+    "description": "Open skills for learning software changes.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "pr-learning-path",
+      "description": "Turn a GitHub pull request or local code change into a focused, self-contained learning path.",
+      "source": "./plugins/pr-learning-path",
+      "version": "0.1.0",
+      "author": {
+        "name": "Andrea Grassi"
+      },
+      "license": "GPL-2.0-only",
+      "strict": true,
+      "skills": [
+        "./skills/pr-learning-path"
+      ]
+    }
+  ]
+}

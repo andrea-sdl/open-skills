@@ -1,0 +1,14 @@
+{
+  "identity": {"host": "github.com", "owner": "acme", "repo": "gateway", "number": 41},
+  "title": "Scope report access to the requested account",
+  "description": "Reports are selected by account ID, but the old endpoint checked only a global analyst role. An analyst for account A could request account B. Resolve the account first and check the caller's account membership before loading a report. Existing admins must retain cross-account access. Missing accounts and denied accounts must both return the same public response so callers cannot probe account IDs.",
+  "commits": [
+    {"sha": "aaa111", "title": "Check account membership before report lookup", "body": "Keep the public denial response unchanged."}
+  ],
+  "issues": [
+    {"number": 90, "title": "Analyst role crosses account boundary", "body": "Authorization must bind the actor to the requested account.", "url": "https://github.com/acme/gateway/issues/90", "state": "CLOSED"}
+  ],
+  "revision": "1111111111111111111111111111111111111111",
+  "url": "https://github.com/acme/gateway/pull/41",
+  "diff": "diff --git a/src/reports.py b/src/reports.py\nindex 1111111..2222222 100644\n--- a/src/reports.py\n+++ b/src/reports.py\n@@ -20,7 +20,9 @@ def get_report(request, account_id, report_id):\n-    if not request.user.is_analyst:\n+    account = accounts.find(account_id)\n+    if not account or not request.user.can_read(account):\n         return not_found()\n-    return reports.find(account_id, report_id)\n+    return reports.find(account.id, report_id)\n \ndiff --git a/src/permissions.py b/src/permissions.py\nindex 3333333..4444444 100644\n--- a/src/permissions.py\n+++ b/src/permissions.py\n@@ -8,3 +8,5 @@ class User:\n+    def can_read(self, account):\n+        return self.is_admin or account.id in self.account_ids\n+\ndiff --git a/tests/test_reports.py b/tests/test_reports.py\nindex 5555555..6666666 100644\n--- a/tests/test_reports.py\n+++ b/tests/test_reports.py\n@@ -1 +1,2 @@\n assert get_report(account_a_analyst, account_a, report).ok\n+assert get_report(account_a_analyst, account_b, report).status == 404\n"
+}

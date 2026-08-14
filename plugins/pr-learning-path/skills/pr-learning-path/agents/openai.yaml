@@ -1,0 +1,7 @@
+interface:
+  display_name: "PR Learning Path"
+  short_description: "Build a focused learning path from code changes."
+  icon_small: "./assets/woven-loop.svg"
+  icon_large: "./assets/woven-loop.svg"
+  brand_color: "#0F8B8D"
+  default_prompt: "Use $pr-learning-path to build a learning path for this pull request or local change."

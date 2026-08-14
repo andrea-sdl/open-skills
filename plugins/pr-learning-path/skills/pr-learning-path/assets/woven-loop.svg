@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="woven-loop-title">
+  <title id="woven-loop-title">Interwoven learning loop</title>
+  <g fill="none" stroke-width="8">
+    <ellipse cx="38" cy="32" rx="19" ry="10" transform="rotate(30 38 32)" stroke="#F28C28" />
+    <ellipse cx="26" cy="32" rx="19" ry="10" transform="rotate(-30 26 32)" stroke="#0F8B8D" />
+    <path d="M38.93 43.39A19 10 30 0 1 26.51 35.83" stroke="#F28C28" />
+  </g>
+</svg>
