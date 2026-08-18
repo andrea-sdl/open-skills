@@ -1,0 +1,15 @@
+{
+  "name": "remove-unneded-coded",
+  "version": "0.1.0",
+  "description": "Review a code change and remove code that the task does not need.",
+  "author": {
+    "name": "Andrea Grassi",
+    "url": "https://github.com/andrea-sdl"
+  },
+  "homepage": "https://github.com/andrea-sdl/open-skills",
+  "repository": "https://github.com/andrea-sdl/open-skills",
+  "license": "GPL-2.0-only",
+  "skills": [
+    "./skills/remove-unneded-coded"
+  ]
+}

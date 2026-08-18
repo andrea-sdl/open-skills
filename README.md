@@ -1,9 +1,9 @@
 # Open Skills
 
-Open Skills contains installable learning tools for Claude Code and Codex.
-The same skill source powers both plugin formats.
+Open Skills contains installable skills for Claude Code and Codex.
+The same source powers both plugin formats.
 
-## Included plugin
+## Included plugins
 
 ### PR Learning Path
 
@@ -17,6 +17,18 @@ need a review product or server at runtime.
 
 Read [the learning-skill goals](docs/learning-skills.md) for the design contract.
 
+### Complexity Evaluator
+
+Complexity Evaluator exposes `$complexity-cli` only when you invoke it. It
+checks changed JavaScript, TypeScript, PHP, Rust, and Python before handoff.
+Install the separate `complexity` binary first. The hook samples are opt-in at
+`plugins/complexity-evaluator/hooks/`.
+
+### Remove Unneded Coded
+
+Remove Unneded Coded reviews a change one file at a time and removes code that
+the task does not need.
+
 ## Requirements
 
 - Python 3.10 or later
@@ -29,25 +41,32 @@ used only for development evals and browser checks.
 
 ## Install in Claude Code
 
+Install the plugins you want:
+
 ```sh
 claude plugin marketplace add andrea-sdl/open-skills
 claude plugin install pr-learning-path@open-skills
+claude plugin install complexity-evaluator@open-skills
+claude plugin install remove-unneded-coded@open-skills
 ```
 
 Start a new Claude Code session after installation.
 
 ## Install in Codex
 
+Install the plugins you want:
+
 ```sh
 codex plugin marketplace add andrea-sdl/open-skills --ref main
 codex plugin add pr-learning-path@open-skills
+codex plugin add complexity-evaluator@open-skills
+codex plugin add remove-unneded-coded@open-skills
 ```
 
 Start a new Codex task after installation.
 
-The direct skill folder is
-`plugins/pr-learning-path/skills/pr-learning-path` for tools that import skill
-folders without a marketplace.
+Each plugin keeps direct skill folders under its `skills/` directory for tools
+that import skills without a marketplace.
 
 ## Use
 
@@ -55,6 +74,18 @@ Ask Claude Code or Codex:
 
 ```text
 Build a learning path for https://github.com/owner/repository/pull/123.
+```
+
+To check complexity, invoke:
+
+```text
+Use $complexity-cli to check the changed supported code.
+```
+
+To simplify a change, invoke:
+
+```text
+Use $remove-unneded-coded to simplify these changes.
 ```
 
 For a local change, ask from the repository you want to study:

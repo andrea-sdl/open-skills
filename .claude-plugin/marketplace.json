@@ -5,7 +5,7 @@
     "url": "https://github.com/andrea-sdl"
   },
   "metadata": {
-    "description": "Open skills for learning software changes.",
+    "description": "Open skills for coding agents.",
     "version": "0.1.0"
   },
   "plugins": [
@@ -21,6 +21,34 @@
       "strict": true,
       "skills": [
         "./skills/pr-learning-path"
+      ]
+    },
+    {
+      "name": "complexity-evaluator",
+      "description": "Explicit skill for checking code complexity before handoff.",
+      "source": "./plugins/complexity-evaluator",
+      "version": "0.4.0",
+      "author": {
+        "name": "Andrea Grassi"
+      },
+      "license": "GPL-2.0-only",
+      "strict": true,
+      "skills": [
+        "./skills/complexity-cli"
+      ]
+    },
+    {
+      "name": "remove-unneded-coded",
+      "description": "Review a code change and remove code that the task does not need.",
+      "source": "./plugins/remove-unneded-coded",
+      "version": "0.1.0",
+      "author": {
+        "name": "Andrea Grassi"
+      },
+      "license": "GPL-2.0-only",
+      "strict": true,
+      "skills": [
+        "./skills/remove-unneded-coded"
       ]
     }
   ]

@@ -15,6 +15,30 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Engineering"
+    },
+    {
+      "name": "complexity-evaluator",
+      "source": {
+        "source": "local",
+        "path": "./plugins/complexity-evaluator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "remove-unneded-coded",
+      "source": {
+        "source": "local",
+        "path": "./plugins/remove-unneded-coded"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
     }
   ]
 }
