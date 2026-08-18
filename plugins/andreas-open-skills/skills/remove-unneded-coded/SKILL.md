@@ -14,11 +14,25 @@ For each addition, ask:
 - Can the same result use less code without making it harder to read?
 - What assumption added this code? Is that assumption needed?
 
-Remove code when the answer shows that it is not needed. Prefer an existing
-simple path to a new helper, option, fallback, or abstraction.
+## Preserve behavior
+
+Simplify the implementation, not its behavior. Before editing:
+
+1. List the behavior provided by the code under review.
+2. Treat existing behavior tests as requirements.
+3. Check affected callers, permissions, error paths, and user types.
+4. Explain why the smaller implementation preserves each behavior.
+
+Do not change or remove a behavior test because simpler code fails it. Change
+such a test only when the user explicitly changes the required behavior or the
+same behavior remains covered elsewhere.
+
+If behavior equivalence cannot be proved, do not edit. Report the possible
+simplification and ask whether the behavior may change.
+
+Remove code only when evidence shows that no required or existing behavior
+depends on it. Prefer an existing simple path to a new helper, option, fallback,
+or abstraction.
 
 Do not use code tricks to make a diff shorter. Keep clear conditions and names.
 Do not change behavior or unrelated code.
-
-If removing code would change a stated requirement or known behavior, explain
-the assumption and ask before making that change.
