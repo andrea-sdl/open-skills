@@ -1,7 +1,7 @@
 {
-  "name": "remove-unneded-coded",
+  "name": "andreas-open-skills",
   "version": "0.1.0",
-  "description": "Review a code change and remove code that the task does not need.",
+  "description": "Reusable skills for learning software changes and keeping code simple.",
   "author": {
     "name": "Andrea Grassi",
     "url": "https://github.com/andrea-sdl"
@@ -10,15 +10,15 @@
   "repository": "https://github.com/andrea-sdl/open-skills",
   "license": "GPL-2.0-only",
   "keywords": [
-    "simplicity",
-    "refactoring",
-    "code-quality"
+    "learning",
+    "complexity",
+    "simplicity"
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Remove Unneded Coded",
-    "shortDescription": "Remove code that the task does not need.",
-    "longDescription": "Review a change one file at a time and remove needless code.",
+    "displayName": "Andrea's Open Skills",
+    "shortDescription": "Learning and code cleanup skills.",
+    "longDescription": "Build learning paths, check complexity, and remove unneeded code.",
     "developerName": "Andrea Grassi",
     "category": "Engineering",
     "capabilities": [
@@ -26,6 +26,8 @@
       "Write"
     ],
     "defaultPrompt": [
+      "Build a learning path for this pull request.",
+      "Use $complexity-cli to check changed supported code.",
       "Use $remove-unneded-coded to simplify these changes."
     ]
   }

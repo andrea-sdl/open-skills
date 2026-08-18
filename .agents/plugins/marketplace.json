@@ -5,34 +5,10 @@
   },
   "plugins": [
     {
-      "name": "pr-learning-path",
+      "name": "andreas-open-skills",
       "source": {
         "source": "local",
-        "path": "./plugins/pr-learning-path"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Engineering"
-    },
-    {
-      "name": "complexity-evaluator",
-      "source": {
-        "source": "local",
-        "path": "./plugins/complexity-evaluator"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
-      "name": "remove-unneded-coded",
-      "source": {
-        "source": "local",
-        "path": "./plugins/remove-unneded-coded"
+        "path": "./plugins/andreas-open-skills"
       },
       "policy": {
         "installation": "AVAILABLE",

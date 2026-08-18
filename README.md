@@ -3,7 +3,7 @@
 Open Skills contains installable skills for Claude Code and Codex.
 The same source powers both plugin formats.
 
-## Included plugins
+## Included skills
 
 ### PR Learning Path
 
@@ -22,7 +22,7 @@ Read [the learning-skill goals](docs/learning-skills.md) for the design contract
 Complexity Evaluator exposes `$complexity-cli` only when you invoke it. It
 checks changed JavaScript, TypeScript, PHP, Rust, and Python before handoff.
 Install the separate `complexity` binary first. The hook samples are opt-in at
-`plugins/complexity-evaluator/hooks/`.
+`plugins/andreas-open-skills/hooks/`.
 
 ### Remove Unneded Coded
 
@@ -41,32 +41,49 @@ used only for development evals and browser checks.
 
 ## Install in Claude Code
 
-Install the plugins you want:
+Install the plugin:
 
 ```sh
 claude plugin marketplace add andrea-sdl/open-skills
-claude plugin install pr-learning-path@open-skills
-claude plugin install complexity-evaluator@open-skills
-claude plugin install remove-unneded-coded@open-skills
+claude plugin install andreas-open-skills@open-skills
 ```
 
 Start a new Claude Code session after installation.
 
 ## Install in Codex
 
-Install the plugins you want:
+Install the plugin:
 
 ```sh
 codex plugin marketplace add andrea-sdl/open-skills --ref main
-codex plugin add pr-learning-path@open-skills
-codex plugin add complexity-evaluator@open-skills
-codex plugin add remove-unneded-coded@open-skills
+codex plugin add andreas-open-skills@open-skills
 ```
 
 Start a new Codex task after installation.
 
-Each plugin keeps direct skill folders under its `skills/` directory for tools
-that import skills without a marketplace.
+## Upgrade from separate plugins
+
+If you installed the earlier separate plugins, remove them before you install
+the combined plugin:
+
+Claude Code:
+
+```sh
+claude plugin uninstall pr-learning-path@open-skills
+claude plugin uninstall complexity-evaluator@open-skills
+claude plugin uninstall remove-unneded-coded@open-skills
+```
+
+Codex:
+
+```sh
+codex plugin remove pr-learning-path@open-skills
+codex plugin remove complexity-evaluator@open-skills
+codex plugin remove remove-unneded-coded@open-skills
+```
+
+The plugin keeps direct skill folders under `plugins/andreas-open-skills/skills/`
+for tools that import skills without a marketplace.
 
 ## Use
 
@@ -102,14 +119,14 @@ and shareable HTML file.
 Run the deterministic suite:
 
 ```sh
-python3 -m unittest discover -s plugins/pr-learning-path/tests -p 'test_*.py'
+python3 -m unittest discover -s plugins/andreas-open-skills/tests -p 'test_*.py'
 ```
 
 Run fixture checks, the deterministic suite, and the browser smoke test through
 the eval runner:
 
 ```sh
-cd plugins/pr-learning-path/evals
+cd plugins/andreas-open-skills/evals
 npm ci
 npm run check
 ```

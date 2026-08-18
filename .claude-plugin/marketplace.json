@@ -10,9 +10,9 @@
   },
   "plugins": [
     {
-      "name": "pr-learning-path",
-      "description": "Turn a GitHub pull request or local code change into a focused, self-contained learning path.",
-      "source": "./plugins/pr-learning-path",
+      "name": "andreas-open-skills",
+      "description": "Reusable skills for learning software changes and keeping code simple.",
+      "source": "./plugins/andreas-open-skills",
       "version": "0.1.0",
       "author": {
         "name": "Andrea Grassi"
@@ -20,34 +20,8 @@
       "license": "GPL-2.0-only",
       "strict": true,
       "skills": [
-        "./skills/pr-learning-path"
-      ]
-    },
-    {
-      "name": "complexity-evaluator",
-      "description": "Explicit skill for checking code complexity before handoff.",
-      "source": "./plugins/complexity-evaluator",
-      "version": "0.4.0",
-      "author": {
-        "name": "Andrea Grassi"
-      },
-      "license": "GPL-2.0-only",
-      "strict": true,
-      "skills": [
-        "./skills/complexity-cli"
-      ]
-    },
-    {
-      "name": "remove-unneded-coded",
-      "description": "Review a code change and remove code that the task does not need.",
-      "source": "./plugins/remove-unneded-coded",
-      "version": "0.1.0",
-      "author": {
-        "name": "Andrea Grassi"
-      },
-      "license": "GPL-2.0-only",
-      "strict": true,
-      "skills": [
+        "./skills/pr-learning-path",
+        "./skills/complexity-cli",
         "./skills/remove-unneded-coded"
       ]
     }
