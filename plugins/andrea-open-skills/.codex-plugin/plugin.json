@@ -1,0 +1,36 @@
+{
+  "name": "andrea-open-skills",
+  "version": "0.2.0",
+  "description": "Reusable skills for learning software changes and keeping code simple.",
+  "author": {
+    "name": "Andrea Grassi",
+    "url": "https://github.com/andrea-sdl"
+  },
+  "homepage": "https://github.com/andrea-sdl/open-skills",
+  "repository": "https://github.com/andrea-sdl/open-skills",
+  "license": "GPL-2.0-only",
+  "keywords": [
+    "learning",
+    "complexity",
+    "simplicity"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Andrea Open Skills",
+    "shortDescription": "Learning and code cleanup skills.",
+    "longDescription": "Build learning paths, check complexity, and remove unneeded code.",
+    "developerName": "Andrea Grassi",
+    "category": "Engineering",
+    "capabilities": [
+      "Interactive",
+      "Write",
+      "Guardrail"
+    ],
+    "defaultPrompt": [
+      "Build a learning path for this pull request.",
+      "Use $complexity-cli to check changed supported code.",
+      "Use $remove-unneeded-code to simplify these changes."
+    ]
+  }
+}

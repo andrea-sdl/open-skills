@@ -1,0 +1,7 @@
+interface:
+  display_name: "Setup Complexity CLI"
+  short_description: "Install or update the complexity executable"
+  default_prompt: "Use $setup-complexity-cli to install or update the complexity executable."
+
+policy:
+  allow_implicit_invocation: false

@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "andreas-open-skills",
+      "name": "andrea-open-skills",
       "source": {
         "source": "local",
-        "path": "./plugins/andreas-open-skills"
+        "path": "./plugins/andrea-open-skills"
       },
       "policy": {
         "installation": "AVAILABLE",

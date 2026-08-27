@@ -1,0 +1,141 @@
+description: Calibrate the explanation rubric against known good and bad answers
+
+prompts:
+  - "{{ candidate | dump }}"
+
+# Echo fixed candidates. Only the grader calls a model; it does not see whether
+# a case is expected to pass or fail.
+providers:
+  - echo
+
+defaultTest:
+  options:
+    provider:
+      id: openai:codex-sdk
+      config:
+        model: gpt-5.6-sol
+        working_dir: "{{ env.PR_LEARNING_EVAL_WORKSPACE }}"
+        skip_git_repo_check: true
+        sandbox_mode: read-only
+        approval_policy: never
+        network_access_enabled: false
+        web_search_enabled: false
+        model_reasoning_effort: high
+  vars:
+    fixture: file://fixtures/auth-boundary.json
+    expectations: file://fixtures/auth-boundary.expectations.md
+
+tests:
+  - description: Accept a grounded authorization example
+    vars:
+      candidate:
+        questions:
+          - &auth
+            prompt: Why can an analyst for A no longer read B's report?
+            expectedAnswer: The endpoint checks access to the requested account before loading the report.
+            sourcePaths: [src/reports.py, src/permissions.py]
+            explanation: &authExplanation
+              why: A global analyst role did not bind the caller to the requested account. The new check uses that account's membership, so access to A alone cannot authorize B.
+              flow:
+                - Resolve the requested account B.
+                - If B exists, check whether the caller is an admin or has B in their account memberships.
+                - For a non-admin with only A, return not found without loading B's report.
+              example: "Illustrative case: an analyst belongs only to A and requests an existing B. B resolves, but membership fails, so the endpoint returns not found. The old analyst check would have reached the report lookup."
+              boundary: Admins still pass for an existing B. Missing accounts and denied accounts share the public not-found response; this does not prove equal response timing.
+    assert:
+      - &accept
+        type: llm-rubric
+        value: file://explanation-rubric.cjs
+        metric: calibration
+
+  - description: Accept a grounded warm-cache fallback and explicit evidence limit
+    vars: &cacheVars
+      fixture: file://fixtures/cache-flow.json
+      expectations: file://fixtures/cache-flow.expectations.md
+      candidate:
+        questions:
+          - &cache
+            prompt: What does a caller receive when a provider refresh fails and a complete cached entry exists?
+            expectedAnswer: The caller receives the previous complete entry.
+            sourcePaths: [src/catalog_loader.py, src/catalog_service.py]
+            explanation: &cacheExplanation
+              why: Partial pages remain request-local. A provider failure prevents replacement, so the service can still read and return the previous complete entry.
+              flow:
+                - Collect provider pages in a request-local list.
+                - A ProviderError interrupts the load before validation and shared-cache replacement.
+                - The service catches ProviderError, finds the previous entry, and returns it.
+              example: "Illustrative case: the cache holds a complete list A. A refresh collects page B, then the provider raises ProviderError. The caller receives A, not B, and the shared entry is not replaced by the partial page."
+              boundary: With no previous entry, the same provider error produces unavailable. The diff does not establish which exception validation raises, so fallback for every validation failure is not proven.
+    assert: [*accept]
+
+  - description: Reject Right and a restated answer despite complete fields
+    vars:
+      candidate:
+        questions:
+          - <<: *auth
+            explanation:
+              why: Right. The endpoint checks access before loading the report.
+              flow: [Check access, Load the report]
+              example: The right answer is to check access before loading the report.
+              boundary: This is correct because access is checked first.
+    assert:
+      - &reject
+        type: not-llm-rubric
+        value: file://explanation-rubric.cjs
+        metric: calibration
+
+  - description: Reject report loading before authorization
+    vars:
+      candidate:
+        questions:
+          - <<: *auth
+            explanation:
+              <<: *authExplanation
+              flow:
+                - Resolve B and load its report.
+                - Check whether the caller is an admin or has membership in B.
+                - Hide the already loaded report when membership fails.
+    assert: [*reject]
+
+  - description: Reject an invented background retry guarantee
+    vars:
+      <<: *cacheVars
+      candidate:
+        questions:
+          - <<: *cache
+            explanation:
+              <<: *cacheExplanation
+              boundary: With no previous entry the request is unavailable. Every provider failure schedules a background retry that later repairs the cache without another request.
+    assert: [*reject]
+
+  - description: Reject fallback claims linked only to the loader
+    vars:
+      <<: *cacheVars
+      candidate:
+        questions:
+          - <<: *cache
+            sourcePaths: [src/catalog_loader.py]
+    assert: [*reject]
+
+  - description: Reject one false explanation even alongside a good one
+    vars:
+      candidate:
+        questions:
+          - *auth
+          - <<: *auth
+            prompt: Does the new boundary preserve admin access to an existing B?
+            expectedAnswer: Yes, admins still have access.
+            explanation:
+              <<: *authExplanation
+              example: "Illustrative case: an admin has no membership in B. The new membership check denies this admin and returns not found."
+    assert: [*reject]
+
+evaluateOptions:
+  repeat: 1
+  cache: false
+  maxConcurrency: 1
+  timeoutMs: 300000
+
+tags:
+  area: pr-learning-path
+  judge: calibration

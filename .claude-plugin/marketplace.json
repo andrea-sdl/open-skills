@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Open skills for coding agents.",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "plugins": [
     {
-      "name": "andreas-open-skills",
+      "name": "andrea-open-skills",
       "description": "Reusable skills for learning software changes and keeping code simple.",
-      "source": "./plugins/andreas-open-skills",
-      "version": "0.1.0",
+      "source": "./plugins/andrea-open-skills",
+      "version": "0.2.0",
       "author": {
         "name": "Andrea Grassi"
       },
@@ -22,7 +22,8 @@
       "skills": [
         "./skills/pr-learning-path",
         "./skills/complexity-cli",
-        "./skills/remove-unneded-coded"
+        "./skills/setup-complexity-cli",
+        "./skills/remove-unneeded-code"
       ]
     }
   ]

@@ -10,7 +10,9 @@ change. They should not turn a change into a memory test.
 2. Test understanding of design choices, control and data flow, assumptions,
    boundaries, preserved behavior, consumers, risks, and impact.
 3. Use hard multiple-choice questions with plausible alternatives. Give short
-   feedback for every option and state the expected answer.
+   feedback for every option and state the expected answer. After any answer,
+   show why it follows, with a code-grounded flow, a worked example, and a key
+   boundary or detail. Do not just repeat the answer.
 4. Link each answer to relevant changed files. Use the exact reviewed GitHub
    head when available. Show links only after the learner answers. Do not copy
    source excerpts into questions or feedback.
