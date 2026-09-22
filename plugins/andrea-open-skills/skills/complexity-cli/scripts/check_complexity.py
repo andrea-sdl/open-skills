@@ -63,7 +63,7 @@ def parse_args() -> argparse.Namespace:
     hook_mode.add_argument(
         "--hook",
         action="store_true",
-        help="Read Stop hook input and return a hook decision",
+        help="Read PostToolUse input and return non-blocking advice",
     )
     hook_mode.add_argument(
         "--baseline-hook",
@@ -197,6 +197,7 @@ def write_state(path: Path, state: dict[str, Any]) -> None:
 def record_baseline(cwd: Path, session_id: str) -> None:
     root, paths = changed_paths(cwd)
     dirty = {path: file_digest(root / path) for path in paths}
+    advice_state_file(root, session_id).unlink(missing_ok=True)
     write_state(
         state_file(root, session_id),
         {
@@ -788,30 +789,78 @@ def checked_result(
         return 2, f"BLOCKED complexity: {error}"
 
 
-def print_hook_result(exit_code: int, message: str) -> None:
-    if exit_code == 0:
-        print("{}")
-        return
-    print(json.dumps({"decision": "block", "reason": message}))
+def advice_state_file(root: Path, session_id: str) -> Path:
+    return state_file(root, session_id).with_suffix(".advice.json")
 
 
-def run_stop_hook(args: argparse.Namespace) -> int:
+def advisory_result(args: argparse.Namespace, session_id: str) -> str:
+    root, paths = task_changed_paths(Path.cwd(), session_id)
+    snapshot = {path: file_digest(root / path) for path in paths}
+    cache_path = advice_state_file(root, session_id)
+    previous = {}
+    try:
+        previous = json.loads(cache_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        pass
+    if not isinstance(previous, dict):
+        previous = {}
+    if previous.get("snapshot") == snapshot:
+        return ""
+
+    exit_code, message = 0, ""
+    if paths:
+        exit_code, message = checked_result(args, session_id)
+    # Scope and totals can change without changing the advice itself.
+    feedback = message
+    if exit_code == 1:
+        feedback = "\n".join(message.splitlines()[2:])
+    write_state(cache_path, {"snapshot": snapshot, "feedback": feedback})
+    if exit_code == 0 or feedback == previous.get("feedback"):
+        return ""
+    if exit_code == 2:
+        return (
+            "Complexity check unavailable: "
+            + message.removeprefix("BLOCKED complexity: ")
+            + "\nContinue the task. Do not claim the check passed or install tools "
+            "unless the user requests setup."
+        )
+    return (
+        "Complexity advice (not a completion requirement):\n"
+        + feedback
+        + "\nConsider simplifying the named functions within the task's scope. "
+        "Preserve behavior and leave unrelated existing code alone. "
+        "Do not split code just to lower a score. Continue if a change would "
+        "make the code worse. Mention remaining findings in the final answer "
+        "only when they affect the user's decision; do not paste this report."
+    )
+
+
+def run_advice_hook(args: argparse.Namespace) -> int:
     try:
         hook = hook_input()
-    except RuntimeError as error:
-        print_hook_result(2, f"BLOCKED complexity: {error}")
-        return 0
-
-    cwd = hook_cwd(hook)
-    if cwd is not None:
+        # Old Stop configurations must also stop blocking after an update.
+        if hook.get("hook_event_name") != "PostToolUse":
+            print("{}")
+            return 0
+        cwd = hook_cwd(hook)
+        session_id = hook_session_id(hook)
+        if cwd is None or session_id is None:
+            print("{}")
+            return 0
         os.chdir(cwd)
-    session_id = hook_session_id(hook)
-    if hook.get("stop_hook_active") is True:
-        print_hook_result(0, "")
-        return 0
+        message = advisory_result(args, session_id)
+    except (OSError, RuntimeError, ValueError) as error:
+        message = f"Complexity check unavailable: {error}. Continue the task."
 
-    exit_code, message = checked_result(args, session_id)
-    print_hook_result(exit_code, message)
+    output = {}
+    if message:
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PostToolUse",
+                "additionalContext": message,
+            }
+        }
+    print(json.dumps(output))
     return 0
 
 
@@ -820,7 +869,7 @@ def main() -> int:
     if args.baseline_hook:
         return run_baseline_hook()
     if args.hook:
-        return run_stop_hook(args)
+        return run_advice_hook(args)
     exit_code, message = checked_result(args, None)
     print(message)
     return exit_code

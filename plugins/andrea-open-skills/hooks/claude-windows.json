@@ -1,7 +1,8 @@
 {
   "hooks": {
-    "Stop": [
+    "PostToolUse": [
       {
+        "matcher": "Bash|Edit|Write|apply_patch",
         "hooks": [
           {
             "command": "py -3 \"%CLAUDE_PLUGIN_ROOT%\\skills\\complexity-cli\\scripts\\check_complexity.py\" --hook",

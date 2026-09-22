@@ -4,27 +4,29 @@ The plugin enables these hooks through `hooks/hooks.json`. The configuration
 examples below are for direct skill installations without the plugin.
 
 Use `UserPromptSubmit` to record the task's starting Git and file state. Use
-`Stop` to check supported files that changed after that baseline. This catches
-edits made through shell commands and changes committed before Stop.
+`PostToolUse` after file edits and shell commands to send complexity advice to
+the agent through `hookSpecificOutput.additionalContext`. Hooks never return a
+blocking decision or a nonzero exit code for findings or check errors.
 
-The checker filters unsupported files before it starts `complexity`. If a task
-changes only unsupported files, the hook returns no decision and stays silent.
-For mixed changes, only supported files reach the CLI. An unchanged supported
-file that was already dirty before the prompt is outside the task scope.
+The checker filters unsupported files before it starts `complexity`. It compares
+supported file contents with the last check, so reads and test runs do not
+repeat analysis. It also suppresses unchanged findings when other file contents
+change. Each user prompt starts a fresh baseline and advice cache.
 
-If the baseline hook is not configured or its state is missing, Stop falls
-back to all Git-changed supported files. A `PostToolUse` hook would run after
-each edit and add avoidable work.
+An unchanged supported file that was already dirty before the prompt is outside
+the task scope. Changes committed during the task remain in scope. Without a
+baseline, the hook falls back to Git-changed supported files. Without a session
+ID or valid working directory, it stays silent.
 
-The checker asks the agent to continue on `REVISE`, `FAIL`, or `BLOCKED`. It
-keeps the original baseline during that continuation. It allows the next stop
-when `stop_hook_active` is true, which prevents an endless hook loop.
-Each later user-submitted prompt starts a new baseline, even when the prior
-Stop hook blocked.
+Findings ask the agent to consider scoped improvements, preserve behavior, and
+continue when a refactor would make the code worse. Missing tools or failed
+analysis produce advice that the check is unavailable, never a pass. The agent
+must not install tools just because an automatic check failed. Use
+`$setup-complexity-cli` when you want to install the tool.
 
-Use `$setup-complexity-cli` on the first run. A direct installation can instead
-put a compatible `complexity` on `PATH` or set `COMPLEXITY_BIN` in the
-environment that starts Codex or Claude Code.
+The explicit CLI and skill keep their strict outcomes and exit codes. Existing
+Stop hook configurations become silent with the updated wrapper; replace them
+with the PostToolUse configuration below to receive advice.
 
 ## Scope decision
 
@@ -42,7 +44,7 @@ Merge this into the repository's `.codex/hooks.json`:
 
 ```json
 {
-  "description": "Check changed JS, TS, PHP, Rust, and Python before Codex stops.",
+  "description": "Advise on changed JS, TS, PHP, Rust, and Python after edits.",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -55,8 +57,9 @@ Merge this into the repository's `.codex/hooks.json`:
         ]
       }
     ],
-    "Stop": [
+    "PostToolUse": [
       {
+        "matcher": "Bash|Edit|Write|apply_patch",
         "hooks": [
           {
             "type": "command",
@@ -95,8 +98,9 @@ Merge this into the repository's `.claude/settings.json`:
         ]
       }
     ],
-    "Stop": [
+    "PostToolUse": [
       {
+        "matcher": "Bash|Edit|Write|apply_patch",
         "hooks": [
           {
             "type": "command",

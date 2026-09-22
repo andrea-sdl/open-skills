@@ -29,9 +29,20 @@ The checker also tries `$CARGO_HOME/bin/complexity` and
 `~/.cargo/bin/complexity`. Use `COMPLEXITY_BIN=/path/to/complexity` for another
 install location.
 
-The plugin hooks record the Git and file state before each user prompt. At
-Stop, they check only supported files changed after that baseline, including
-changes committed during the task. Unsupported-only work stays silent.
+The plugin hooks record the Git and file state before each user prompt. After
+file edits or shell commands, they check supported files changed after that
+baseline, including changes committed during the task. They skip analysis when
+file contents have not changed and suppress repeated advice. Unsupported-only
+work stays silent.
+
+Hook findings are advice, not completion requirements. Consider scoped changes
+that improve clarity and preserve behavior. Leave unrelated existing code
+alone. Do not split code just to lower a score. If analysis is unavailable,
+continue the task without claiming a pass. Do not install tools unless the user
+requests setup. Mention remaining findings only when they affect the user's
+decision; do not paste the hook report into the final answer.
+
+Explicit skill runs keep the strict outcomes and exit codes below.
 
 ## Limits and outcomes
 

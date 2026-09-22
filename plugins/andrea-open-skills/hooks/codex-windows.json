@@ -1,8 +1,9 @@
 {
-  "description": "Check changed JS, TS, PHP, Rust, and Python before Codex stops.",
+  "description": "Check changed JS, TS, PHP, Rust, and Python and advise Codex after edits.",
   "hooks": {
-    "Stop": [
+    "PostToolUse": [
       {
+        "matcher": "Bash|Edit|Write|apply_patch",
         "hooks": [
           {
             "command": "py -3 \"%CLAUDE_PLUGIN_ROOT%\\skills\\complexity-cli\\scripts\\check_complexity.py\" --hook",

@@ -31,8 +31,9 @@ Complexity Evaluator exposes `$complexity-cli` only when you invoke it. It
 checks changed JavaScript, TypeScript, PHP, Rust, and Python before handoff.
 On first use, `$setup-complexity-cli` installs the required native executable.
 The plugin enables lifecycle hooks that record the task baseline and check
-supported code before Codex or Claude Code stops. Platform-specific examples
-remain in `plugins/andrea-open-skills/hooks/`.
+supported code after edits or shell commands. Findings guide the agent without
+blocking completion; unchanged files and repeated advice stay silent.
+Platform-specific examples remain in `plugins/andrea-open-skills/hooks/`.
 
 It is useful before review or handoff because complex code costs more to read,
 test, and change. The skill checks only supported changed code, so it keeps the
