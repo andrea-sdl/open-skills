@@ -122,6 +122,16 @@ def is_supported_path(root: Path, raw_path: bytes) -> bool:
     return Path(path).suffix in SUPPORTED_SUFFIXES and (root / path).is_file()
 
 
+def in_git_repository(cwd: Path) -> bool:
+    result = subprocess.run(
+        ["git", "rev-parse", "--git-dir"],
+        cwd=cwd,
+        check=False,
+        capture_output=True,
+    )
+    return result.returncode == 0
+
+
 def repository_root(cwd: Path) -> Path:
     try:
         root_text = run_git(["rev-parse", "--show-toplevel"], cwd)
@@ -845,6 +855,9 @@ def run_advice_hook(args: argparse.Namespace) -> int:
         cwd = hook_cwd(hook)
         session_id = hook_session_id(hook)
         if cwd is None or session_id is None:
+            print("{}")
+            return 0
+        if not args.paths and not in_git_repository(cwd):
             print("{}")
             return 0
         os.chdir(cwd)

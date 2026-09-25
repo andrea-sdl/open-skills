@@ -99,6 +99,15 @@ class ComplexityHookTests(unittest.TestCase):
             source.write_text("x = 2\n")
             self.assertIn("hookSpecificOutput", self.run_hook())
 
+    def test_projectless_work_stays_silent(self):
+        projectless = Path(self.temporary.name) / "projectless"
+        projectless.mkdir()
+        self.hook["cwd"] = str(projectless)
+        with patch.object(checker, "check") as check:
+            self.assertEqual(self.run_hook(), {})
+            self.assertEqual(self.run_hook(), {})
+            check.assert_not_called()
+
     def test_pass_stays_silent(self):
         (self.root / "app.py").write_text("x = 1\n")
         with patch.object(checker, "check", return_value=("PASS", 0, "PASS complexity")):
